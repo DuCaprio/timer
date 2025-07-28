@@ -95,7 +95,7 @@ with col_left:
         else:
             st.markdown('**타이머**',help='대기 중')
     with status_col3:
-        st.markdown(f"<p style='text_align'><strong>{int(progress*100)}%</strong></p>",
+        st.markdown(f"<p style='text_align:right;'><strong>{int(progress*100)}%</strong></p>",
                     unsafe_allow_html=True)
 
 with col_right:
