@@ -62,11 +62,11 @@ def update_timer():
 
 def get_timer_status():
     # 타이머가 완료되었을 때 | 타이머가 진행 중이고 정지 버튼을 누르지 않았을 때 | 타이머 정지 버튼을 눌렀을 때 | 그 외
-    if session_state['timer_completed']:
+    if st.session_state['timer_completed']:
         return 'completed'
-    elif session_state['timer_running'] and not session_state['timer_paused']:
+    elif st.session_state['timer_running'] and not session_state['timer_paused']:
         return 'running'
-    elif st.session_state['timer_paused'']:
+    elif st.session_state['timer_paused']:
         return 'paused'
     else:
         return 'stopped'
@@ -87,16 +87,16 @@ with col_left:
     status_col1,status_col2,status_col3 = st.columns(3)
     with status_col1:
         if current_status == 'runnung':
-            st.markdown('타이머',help='실행 중')
-        elif urrent_status == 'completed':
-            st.markdown('타이머',help='완료')
-        elif urrent_status == 'paused':
-            st.markdown('타이머',help='정지')
+            st.markdown('**타이머**',help='실행 중')
+        elif current_status == 'completed':
+            st.markdown('**타이머**',help='완료')
+        elif current_status == 'paused':
+            st.markdown('**타이머**',help='정지')
         else:
-            st.markdown('타이머',help='대기 중')
+            st.markdown('**타이머**',help='대기 중')
     with status_col3:
-        st.markdown(f"{int(progress*100)%}")
+        st.markdown(f"<p style='text_align'><strong>{int(progress*100)}%</strong></p>",
+                    unsafe_allow_html=True)
 
 with col_right:
     pass
-
