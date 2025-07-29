@@ -32,6 +32,8 @@ if 'total_paused_time' not in st.session_state:
     st.session_state['total_paused_time'] = 0 
 if 'remaining_time' not in st.session_state:
     st.session_state['remaining_time'] = 0
+if 'remaining_seconds' not in st.session_state:
+    st.session_state['remaining_seconds'] = 25*60
 # 타이머 전체 시간(초 단위)
 if 'total_seconds' not in st.session_state:
     st.session_state['total_seconds'] = 25*60 # 25분 
@@ -64,12 +66,19 @@ def get_timer_status():
     # 타이머가 완료되었을 때 | 타이머가 진행 중이고 정지 버튼을 누르지 않았을 때 | 타이머 정지 버튼을 눌렀을 때 | 그 외
     if st.session_state['timer_completed']:
         return 'completed'
-    elif st.session_state['timer_running'] and not session_state['timer_paused']:
+    elif st.session_state['timer_running'] and not st.session_state['timer_paused']:
         return 'running'
     elif st.session_state['timer_paused']:
         return 'paused'
     else:
         return 'stopped'
+
+def format_time(second):
+    hours = second//3600 # 몫 
+    minutes = (second%3600)//60 # 나머지
+    seconds = second%60 # 나머지 
+    # 02d: 두 자리만 출력(정수형)
+    return f"{hours:02d}:{minutes:02d}:{seconds:02d}"
 
 update_timer()
 current_status = get_timer_status()
@@ -78,7 +87,7 @@ col_left,col_right = st.columns(2)
 
 with col_left:
     if st.session_state['total_seconds']>0:
-        progress = st.session_state['remaining_time']/st.session_state['total_seconds']
+        progress = st.session_state['remaining_seconds']/st.session_state['total_seconds']
         progress = max(0,min(1,progress)) # 0부터 1사이 값만 출력되도록 설정 
     else:
         progress = 0
@@ -86,7 +95,7 @@ with col_left:
     st.progress(float(progress))
     status_col1,status_col2,status_col3 = st.columns(3)
     with status_col1:
-        if current_status == 'runnung':
+        if current_status == 'running':
             st.markdown('**타이머**',help='실행 중')
         elif current_status == 'completed':
             st.markdown('**타이머**',help='완료')
@@ -94,9 +103,26 @@ with col_left:
             st.markdown('**타이머**',help='정지')
         else:
             st.markdown('**타이머**',help='대기 중')
+
     with status_col3:
-        st.markdown(f"<p style='text_align:right;'><strong>{int(progress*100)}%</strong></p>",
+        st.markdown(f"<p style='text-align:right;'><strong>{int(progress*100)}%</strong></p>",
                     unsafe_allow_html=True)
+    
+    st.markdown("""
+                <style>
+                .stColumns> div{
+                display:flex;
+                justify-content:center;
+                align-items:center;}
+                </style>
+                """,unsafe_allow_html=True)
+    st.markdown(f"""
+    <div class="timer-time" style='text-align: center;' font-size: rem; font-weight: bold; 
+                 margin: 2rem 0;">
+        {format_time(st.session_state['remaining_seconds'])}
+    </div>
+    """, unsafe_allow_html=True)
+
 
 with col_right:
     pass
